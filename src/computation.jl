@@ -25,57 +25,83 @@ sym = [ :sqrt, :+, :-, :/, :^, :tan, :*,
         :binomial, :factorial, :gcd, :lcm, 
         :gcdx, :ispow2, :nextpow, :prevpow, 
         :nextprod, :invmod, :powermod, :ndigits, 
-        :widemul, :evalpoly, :@evalpoly, :im]
+        :widemul, :evalpoly, :@evalpoly, :im, 
+        :vcat, :hcat]
 
 #Iterate through expression to verify all items in it are valid symbols and operations.
-function subtasking(math, tasks, sbtask)
+function subtasking(math, tasks, sbtask, LOG_INFO)
 
     success = false
     for ñ in sbtask[1:tasks]
+
         if hastask(ñ)
-            
-            if ñ.args[1] in sym
-                continue
-            elseif ispermitted(ñ.args[1])
-                continue
-            else
-                unknownmath(ñ)
+
+            for i in 1:length(ñ.args)
+
+                if ñ.args[i] in sym
+                    push!(LOG_INFO, "    └ $(ñ.args[i]) is a valid symbol | Belongs to: $(ñ) | Length: $(i) - $(length(ñ.args))")
+                    continue
+                elseif ñ.args[i] isa Number
+                    push!(LOG_INFO, "    └ $(ñ.args[i]) is a valid number | Belongs to: $(ñ) | Length: $(i) - $(length(ñ.args))")
+                    continue
+                elseif ispermitted(ñ.args[i], LOG_INFO)
+                    push!(LOG_INFO, "    └ $(ñ.args[i]) is permitted | Belongs to: $(ñ) | Length: $(i) - $(length(ñ.args))")
+                    continue
+                else
+                    unknownmath(ñ)
+                end
             end
-        elseif ispermitted(ñ)
-            success = true
-        else
-            unknownmath(ñ)
+
+            if !success
+                push!(LOG_INFO, "    └ Subtasks done.")
+                success = true 
+            end
+
+        elseif ispermitted(ñ, LOG_INFO) success = true
+        else unknownmath(ñ)
         end
     end
 
+    push!(LOG_INFO, "    └ Checking if :Expr can be performed.")
     if success
+        push!(LOG_INFO, "    \n$(math)\n└ :Expr parsed correctly.\n")
         return Core.eval(Base.Math, math)
+    else
+        @error("-> $(math) returned nothing.")
+        return nothing
     end
     
 end
 
 #Check if value is a valid math operation, such as a mathematical function, number, vector, or matrix.
-function ispermitted(tsk)
+function ispermitted(tsk, LOG_INFO)
 
-    if tsk in sym
-        return true
-    elseif tsk isa Number
-        return true
+    if tsk in sym return true
+        push!(LOG_INFO, "    └ $(ñ.args[i]) is permitted | Belongs to: $(ñ) | Length: $(i) - $(length(ñ.args))")
+    elseif tsk isa Number return true
     elseif tsk isa Expr && tsk isa Vector{Int} || tsk isa Vector{Int8} || tsk isa Vector{Int16} || tsk isa Vector{Int32} || tsk isa Vector{Int64} || tsk isa Vector{Int128}
+        push!(LOG_INFO, "    └ $(tsk) is a valid vector")
         return true
     elseif tsk isa Expr && tsk isa Vector{Float16} || tsk isa Vector{Float32} || tsk isa Vector{Float64} 
+        push!(LOG_INFO, "    └ $(tsk) is a valid vector")
         return true
     elseif tsk isa Expr && tsk isa Matrix{Int} || tsk isa Matrix{Int8} || tsk isa Matrix{Int16} || tsk isa Matrix{Int32} || tsk isa Matrix{Int64} || tsk isa Matrix{Int128}
+        push!(LOG_INFO,"    └ $(tsk) is a valid matrix")
         return true
     elseif tsk isa Expr && tsk isa Matrix{Float16} || tsk isa Matrix{Float32} || tsk isa Matrix{Float64}
+        push!(LOG_INFO,"    └ $(tsk) is a valid matrix")
         return true
     elseif tsk isa Expr && tsk isa Vector{Complex{Int}} || tsk isa Vector{Complex{Int8}} || tsk isa Vector{Complex{Int16}} || tsk isa Vector{Complex{Int32}} || tsk isa Vector{Complex{Int64}} || tsk isa Vector{Complex{Int128}}
+        push!(LOG_INFO,"    └ $(tsk) is a valid vector")
         return true
     elseif tsk isa Expr && tsk isa Vector{ComplexF16} || tsk isa Vector{ComplexF32} || tsk isa Vector{ComplexF64}
+        push!(LOG_INFO,"    └ $(tsk) is a valid vector")
         return true
     elseif tsk isa Expr && tsk.args[1] in sym
+        push!(LOG_INFO,"    └ $(tsk.args[1]) is a valid Expression found in sym")
         return true
     else
+        push!(LOG_INFO, "-> $(tsk) was not recognized")
         return false
     end
 end
@@ -89,10 +115,8 @@ end
 function unknownmath(ñ)
 
     items = "Empy value."
-    if hastask(ñ)
-        items = "Contains $(ñ.args)"
-    end
-
+    if hastask(ñ) items = "Contains $(ñ.args)" end
     @error("$(ñ) is not recognized as a valid math operation.\nType of value: $(typeof(ñ))\n └ $(items)")
     return nothing
+
 end
