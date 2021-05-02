@@ -15,8 +15,10 @@ x = calculate("sqrt(complex(-90))+pi")
 > 3.141592653589793 + 9.486832980505138im
 ```
 Displaying log info.
-```
-julia> x = calculate("sqrt(complex(-90)) + 10im", true)
+```julia
+include("Mathenize.jl")
+using .Mathenize
+x = calculate("sqrt(complex(-90)) + 10im", true)
 ┌ Info: -> sqrt(complex(-90)) + 10im <-
 │  └Tasks: 3
 │  └Any[:+, :(sqrt(complex(-90))), :(10im)]
