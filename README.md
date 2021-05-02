@@ -19,6 +19,9 @@ Displaying log info.
 include("Mathenize.jl")
 using .Mathenize
 x = calculate("sqrt(complex(-90)) + 10im", true)
+```
+Output:
+```
 ┌ Info: -> sqrt(complex(-90)) + 10im <-
 │  └Tasks: 3
 │  └Any[:+, :(sqrt(complex(-90))), :(10im)]
