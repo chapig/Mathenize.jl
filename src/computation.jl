@@ -40,34 +40,38 @@ function subtasking(math, tasks, sbtask, LOG_INFO)
 
                 if ñ.args[i] in sym
                     push!(LOG_INFO, "    └ $(ñ.args[i]) is a valid symbol | Belongs to: $(ñ) | Length: $(i) - $(length(ñ.args))")
+                    success = true
                     continue
                 elseif ñ.args[i] isa Number
                     push!(LOG_INFO, "    └ $(ñ.args[i]) is a valid number | Belongs to: $(ñ) | Length: $(i) - $(length(ñ.args))")
+                    success = true
                     continue
                 elseif ispermitted(ñ.args[i], LOG_INFO)
                     push!(LOG_INFO, "    └ $(ñ.args[i]) is permitted | Belongs to: $(ñ) | Length: $(i) - $(length(ñ.args))")
+                    success = true
                     continue
                 else
+                    success = false
                     unknownmath(ñ)
+                    break
                 end
             end
-
-            if !success
-                push!(LOG_INFO, "    └ Subtasks done.")
-                success = true 
-            end
-
-        elseif ispermitted(ñ, LOG_INFO) success = true
+                
+        elseif ispermitted(ñ, LOG_INFO) 
+            success = true
         else unknownmath(ñ)
+            success = false
+            break
         end
     end
 
+    push!(LOG_INFO, "    └ Subtasks done.")
     push!(LOG_INFO, "    └ Checking if :Expr can be performed.")
     if success
         push!(LOG_INFO, "    \n$(math)\n└ :Expr parsed correctly.\n")
         return Core.eval(Base.Math, math)
     else
-        @error("-> $(math) returned nothing.")
+        push!(LOG_INFO, "    \n$(math)\n└ :Expr didn't parse correctly.\n")
         return nothing
     end
     
@@ -102,6 +106,7 @@ function ispermitted(tsk, LOG_INFO)
         return true
     else
         push!(LOG_INFO, "-> $(tsk) was not recognized")
+        unknownmath(tsk)
         return false
     end
 end
