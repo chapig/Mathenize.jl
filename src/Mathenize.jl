@@ -35,13 +35,13 @@ function calculate(math::String, print_info::Bool=false)
         push!(LOG_INFO, "   └ Performing subtasks:")
         r = subtasking(math, tasks, math.args, LOG_INFO)
     elseif math isa Number
-        push!(LOG_INFO, "   └$(math) is a Number")
+        push!(LOG_INFO, "   └$(math) is a number")
         r = math
     elseif math in sym
-        push!(LOG_INFO, "   └$(math) is a valid Symbol")
+        push!(LOG_INFO, "   └$(math) is a valid symbol")
         r = Core.eval(Base.Math, math)
     elseif tasks == 1 && ispermitted(math, LOG_INFO)
-        push!(LOG_INFO, "   └$(math) is a valid a permitted Number or Expression")
+        push!(LOG_INFO, "   └$(math) is a valid a permitted number or expression")
         r = Core.eval(Base.Math, math)
     else
         r = nothing
