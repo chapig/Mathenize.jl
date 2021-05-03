@@ -39,15 +39,12 @@ function subtasking(math, tasks, sbtask, LOG_INFO)
             for i in 1:length(ñ.args)
 
                 if ñ.args[i] in sym
-                    push!(LOG_INFO, "    └ $(ñ.args[i]) is a valid symbol | Belongs to: $(ñ) | Length: $(i) - $(length(ñ.args))")
                     success = true
                     continue
                 elseif ñ.args[i] isa Number
-                    push!(LOG_INFO, "    └ $(ñ.args[i]) is a valid number | Belongs to: $(ñ) | Length: $(i) - $(length(ñ.args))")
                     success = true
                     continue
                 elseif ispermitted(ñ.args[i], LOG_INFO)
-                    push!(LOG_INFO, "    └ $(ñ.args[i]) is permitted | Belongs to: $(ñ) | Length: $(i) - $(length(ñ.args))")
                     success = true
                     continue
                 else
@@ -59,19 +56,19 @@ function subtasking(math, tasks, sbtask, LOG_INFO)
                 
         elseif ispermitted(ñ, LOG_INFO) 
             success = true
-        else unknownmath(ñ)
+        else 
+            unknownmath(ñ)
             success = false
             break
         end
     end
 
-    push!(LOG_INFO, "    └ Subtasks done.")
-    push!(LOG_INFO, "    └ Checking if :Expr can be performed.")
+    push!(LOG_INFO, "    Subtasks were all read\n(...) Checking if expression was parsed and can be computed")
     if success
-        push!(LOG_INFO, "    \n$(math)\n└ :Expr parsed correctly.\n")
+        push!(LOG_INFO, "! Expression was parsed and computed succesfully\n")
         return Core.eval(Base.Math, math)
     else
-        push!(LOG_INFO, "    \n$(math)\n└ :Expr didn't parse correctly.\n")
+        push!(LOG_INFO, "! Expression was not parsed succesfully\n")
         return nothing
     end
     
@@ -80,32 +77,24 @@ end
 #Check if value is a valid math operation, such as a mathematical function, number, vector, or matrix.
 function ispermitted(tsk, LOG_INFO)
 
-    if tsk in sym return true
-        push!(LOG_INFO, "    └ $(ñ.args[i]) is permitted | Belongs to: $(ñ) | Length: $(i) - $(length(ñ.args))")
-    elseif tsk isa Number return true
-    elseif tsk isa Expr && tsk isa Vector{Int} || tsk isa Vector{Int8} || tsk isa Vector{Int16} || tsk isa Vector{Int32} || tsk isa Vector{Int64} || tsk isa Vector{Int128}
-        push!(LOG_INFO, "    └ $(tsk) is a valid vector")
+    push!(LOG_INFO, "    └ -> $(tsk) is being checked, its type is: $(typeof(tsk))")
+    if tsk in sym 
+        push!(LOG_INFO, "        └ $(tsk) is permitted that belongs to: $(tsk)")
+        return true 
+    elseif tsk isa Number 
+        push!(LOG_INFO, "        └ $(tsk) is permitted that belongs to: $(tsk)")
         return true
-    elseif tsk isa Expr && tsk isa Vector{Float16} || tsk isa Vector{Float32} || tsk isa Vector{Float64} 
-        push!(LOG_INFO, "    └ $(tsk) is a valid vector")
+    elseif tsk isa Expr && hasproperty(tsk, :head) && tsk.head == :hcat || tsk.head == :vcat
+        push!(LOG_INFO, "        └ $(tsk) is a valid matrix that belongs to: $(tsk)")
         return true
-    elseif tsk isa Expr && tsk isa Matrix{Int} || tsk isa Matrix{Int8} || tsk isa Matrix{Int16} || tsk isa Matrix{Int32} || tsk isa Matrix{Int64} || tsk isa Matrix{Int128}
-        push!(LOG_INFO,"    └ $(tsk) is a valid matrix")
-        return true
-    elseif tsk isa Expr && tsk isa Matrix{Float16} || tsk isa Matrix{Float32} || tsk isa Matrix{Float64}
-        push!(LOG_INFO,"    └ $(tsk) is a valid matrix")
-        return true
-    elseif tsk isa Expr && tsk isa Vector{Complex{Int}} || tsk isa Vector{Complex{Int8}} || tsk isa Vector{Complex{Int16}} || tsk isa Vector{Complex{Int32}} || tsk isa Vector{Complex{Int64}} || tsk isa Vector{Complex{Int128}}
-        push!(LOG_INFO,"    └ $(tsk) is a valid vector")
-        return true
-    elseif tsk isa Expr && tsk isa Vector{ComplexF16} || tsk isa Vector{ComplexF32} || tsk isa Vector{ComplexF64}
-        push!(LOG_INFO,"    └ $(tsk) is a valid vector")
+    elseif tsk isa Expr && hasproperty(tsk, :head) && tsk.head == :vect
+        push!(LOG_INFO,"        └ $(tsk) is a valid vector that belongs to: $(tsk)")
         return true
     elseif tsk isa Expr && tsk.args[1] in sym
-        push!(LOG_INFO,"    └ $(tsk.args[1]) is a valid Expression found in sym")
+        push!(LOG_INFO,"        └ $(tsk.args[1]) is a valid Expression found in sym that belongs to: $(tsk)")
         return true
     else
-        push!(LOG_INFO, "-> $(tsk) was not recognized")
+        push!(LOG_INFO, "       └ $(tsk) was not recognized")
         unknownmath(tsk)
         return false
     end
@@ -119,9 +108,9 @@ end
 #Error when given input contains an unknown operation.
 function unknownmath(ñ)
 
-    items = "Empy value."
-    if hastask(ñ) items = "Contains $(ñ.args)" end
-    @error("$(ñ) is not recognized as a valid math operation.\nType of value: $(typeof(ñ))\n └ $(items)")
+    items = "and is an empty value"
+    if hastask(ñ) items = "that contains $(ñ.args)" end
+    error("$(ñ) is not recognized as a valid math operation. $(ñ) is a $(typeof(ñ)) $(items)")
     return nothing
 
 end
