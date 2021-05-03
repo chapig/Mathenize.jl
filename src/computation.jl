@@ -29,7 +29,7 @@ sym = [ :sqrt, :+, :-, :/, :^, :tan, :*,
         :vcat, :hcat]
 
 #Iterate through expression to verify all items in it are valid symbols and operations.
-function subtasking(math, tasks, sbtask, LOG_INFO)
+function subtasking(math, tasks, sbtask, LOG_INFO, print_info)
 
     success = false
     for ñ in sbtask[1:tasks]
@@ -48,18 +48,16 @@ function subtasking(math, tasks, sbtask, LOG_INFO)
                     success = true
                     continue
                 else
-                    success = false
-                    unknownmath(ñ)
-                    break
+                    push!(LOG_INFO, "       └ $(ñ) -> $(typeof(ñ)) ||| $(ñ.args[1]) -> $(typeof(ñ)) was not a recognized subtask")
+                    unknownmath(ñ, LOG_INFO, print_info)
                 end
             end
                 
         elseif ispermitted(ñ, LOG_INFO) 
             success = true
-        else 
-            unknownmath(ñ)
-            success = false
-            break
+        else
+            push!(LOG_INFO, "       └ $(ñ) was not a recognized task")
+            unknownmath(ñ, LOG_INFO, print_info)
         end
     end
 
@@ -77,26 +75,37 @@ end
 #Check if value is a valid math operation, such as a mathematical function, number, vector, or matrix.
 function ispermitted(tsk, LOG_INFO)
 
+    #Adding log info.
     push!(LOG_INFO, "    └ -> $(tsk) is being checked, its type is: $(typeof(tsk))")
+
     if tsk in sym 
+
+        #tsk is in Array named sym.
         push!(LOG_INFO, "        └ $(tsk) is permitted that belongs to: $(tsk)")
         return true 
+
     elseif tsk isa Number 
+
         push!(LOG_INFO, "        └ $(tsk) is permitted that belongs to: $(tsk)")
         return true
-    elseif tsk isa Expr && hasproperty(tsk, :head) && tsk.head == :hcat || tsk.head == :vcat
-        push!(LOG_INFO, "        └ $(tsk) is a valid matrix that belongs to: $(tsk)")
-        return true
-    elseif tsk isa Expr && hasproperty(tsk, :head) && tsk.head == :vect
-        push!(LOG_INFO,"        └ $(tsk) is a valid vector that belongs to: $(tsk)")
-        return true
+
+    elseif tsk isa Expr && hasproperty(tsk, :head) && tsk.head == :hcat || tsk.head == :vcat || tsk.head == :vect
+
+            push!(LOG_INFO, "        └ $(tsk) is a valid matrix or vector that belongs to: $(tsk)")
+            return true
+        
     elseif tsk isa Expr && tsk.args[1] in sym
-        push!(LOG_INFO,"        └ $(tsk.args[1]) is a valid Expression found in sym that belongs to: $(tsk)")
+
+        #Checking if expression's first argument is in sym.
+        push!(LOG_INFO,"        └ $(tsk.args[1]) is a valid expression found in sym that belongs to: $(tsk)")
         return true
+
     else
-        push!(LOG_INFO, "       └ $(tsk) was not recognized")
-        unknownmath(tsk)
+
+        #Not found.
+        push!(LOG_INFO, "       └ $(tsk) was not recognized as permitted")
         return false
+
     end
 end
 
@@ -106,11 +115,18 @@ function hastask(sb)
 end
 
 #Error when given input contains an unknown operation.
-function unknownmath(ñ)
+function unknownmath(ñ, LOG_INFO, print_info::Bool)
 
-    items = "and is an empty value"
+
+    items = "and is an empty value."
+    if !print_info 
+        message_info = "Check the log using calculate(math::String, true)"
+    else
+        message_info = ""
+        @info join(LOG_INFO, "\n")
+    end
     if hastask(ñ) items = "that contains $(ñ.args)" end
-    error("$(ñ) is not recognized as a valid math operation. $(ñ) is a $(typeof(ñ)) $(items)")
+    error("Error in Mathenize syntax. $(message_info)\n└ ->$(ñ) is not recognized as a valid math operation. \n └ The input given is a $(typeof(ñ)) $(items)")
     return nothing
 
 end
