@@ -46,15 +46,15 @@ Output:
 x = calculate("for i in 1:10; print(i); end;")
 ```
 ```
-┌ Error: for i = 1:10
-│     #= none:1 =#
-│     print(i)
-│ end is not recognized as a valid math operation.
-│ Type of value: Expr
-│  └ Contains Any[:(i = 1:10), quote
-│     #= none:1 =#
-│     print(i)
-│ end]
+ERROR: Error in Mathenize syntax. Check the log using calculate(math::String, true)
+└ ->for i = 1:10
+    #= none:1 =#
+    print(i)
+end is not recognized as a valid math operation.
+ └ The input given is a Expr that contains Any[:(i = 1:10), quote
+    #= none:1 =#
+    print(i)
+end]
 ```
 ## Using Core.eval(Base.Math, :Expr)
 ```julia
