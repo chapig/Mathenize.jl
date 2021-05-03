@@ -33,7 +33,7 @@ function calculate(math::String, print_info::Bool=false)
 
     if tasks >= 1
         push!(LOG_INFO, "   └ Performing subtasks:")
-        r = subtasking(math, tasks, math.args, LOG_INFO)
+        r = subtasking(math, tasks, math.args, LOG_INFO, print_info)
     elseif math isa Number
         push!(LOG_INFO, "   └$(math) is a number")
         r = math
@@ -45,14 +45,15 @@ function calculate(math::String, print_info::Bool=false)
         r = Core.eval(Base.Math, math)
     else
         r = nothing
-        unknownmath(math)
+        unknownmath(math, LONG_INFO, print_info)
     end
 
-    if print_info
+
+    if print_info == true
         @info join(LOG_INFO, "\n")
     end
 
     return r #Return result
 
-end
-end #End module
+end 
+end #Return result
