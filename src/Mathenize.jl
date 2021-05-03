@@ -7,13 +7,13 @@ export calculate
 include("computation.jl")
 
 """
-    calculate(math::String)
+    calculate(math::String, print_info::Bool=false)
 
 Return calculated value(s) in a string. 
 
 # Arguments
-- `math::String`: Math operation.
-- `print_info::Bool`: Shows log of what happened during the calculation.
+- `math::String` Math operation.
+- `print_info::Bool` Shows log of what happened during the calculation.
 
 # Examples
 ```julia-repl
