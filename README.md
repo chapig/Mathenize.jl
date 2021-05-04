@@ -6,7 +6,13 @@ written by Luis C. Gómez.
 
 Most math operations are possible, check [Mathematics - The Julia Language](https://docs.julialang.org/en/v1/base/math/#Mathematical-Functions) to check functions.
 
-# Usage
+### 
+
+
+
+### Installation and Usage
+
+Use Julia 1.6.1 or above.
 
 ```julia
 include("Mathenize.jl")
@@ -39,9 +45,9 @@ Output:
 └ └ :Expr parsed correctly.
 0.0 + 19.486832980505138im
 ```
-# Difference between parsing with Core.eval(Base.Math, :Expr) and Mathenize
+### Difference between parsing with Core.eval(Base.Math, :Expr) and Mathenize
 
-## Using Mathenize, the following input will result in:
+#### Using Mathenize, the following input will result in:
 ```julia
 x = calculate("for i in 1:10; print(i); end;")
 ```
@@ -56,11 +62,11 @@ end is not recognized as a valid math operation.
     print(i)
 end]
 ```
-## Using Core.eval(Base.Math, :Expr)
+#### Using Core.eval(Base.Math, :Expr)
 ```julia
 Core.eval(Base.Math, Meta.parse("for i in 1:10; print(i); end;"))
 > 12345678910
 ```
 
-# Author
+### Author
 This package was written by Luis C. Gómez.
