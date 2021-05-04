@@ -14,11 +14,8 @@ Most math operations are possible, check [Mathematics - The Julia Language](http
 
 Use Julia 1.6.1 or above.
 
-```julia
-include("Mathenize.jl")
-using .Mathenize
-x = calculate("sqrt(complex(-90))+pi")
-> 3.141592653589793 + 9.486832980505138im
+```@example
+(@v1.6) pkg> add Mathenize
 ```
 Displaying log info.
 ```julia
