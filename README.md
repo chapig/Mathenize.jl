@@ -17,6 +17,7 @@ Use Julia 1.6.1 or above.
 ```@example
 (@v1.6) pkg> add Mathenize
 ```
+
 Displaying log info.
 ```julia
 include("Mathenize.jl")
