@@ -20,8 +20,7 @@ Use Julia 1.6.1 or above.
 
 Displaying log info.
 ```julia
-include("Mathenize.jl")
-using .Mathenize
+using Mathenize
 x = calculate("sqrt(complex(-90)) + 10im", true)
 ```
 Output:
