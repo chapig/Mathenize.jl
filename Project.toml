@@ -1,7 +1,7 @@
 name = "Mathenize"
 uuid = "f736b957-7581-4cbb-b747-c02a85f5d4ae"
 authors = ["Luis C. Gómez"]
-version = "0.2.4"
+version = "0.2.5"
 
 [compat]
 julia = "1.6.1"
