@@ -56,4 +56,4 @@ function calculate(math::String, print_info::Bool=false)
     return r #Return result
 
 end 
-end #Return result
+end #End module
