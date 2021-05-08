@@ -45,7 +45,7 @@ function calculate(math::String, print_info::Bool=false)
         r = Core.eval(Base.Math, math)
     else
         r = nothing
-        unknownmath(math, LONG_INFO, print_info)
+        unknownmath(math, LOG_INFO, print_info)
     end
 
 
