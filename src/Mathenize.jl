@@ -24,13 +24,14 @@ julia> calculate("sqrt(complex(-90)) + 10im")
 """
 function calculate(math::String, print_info::Bool=false)
 
+    r = nothing
     math = Meta.parse(math)
     hasproperty(math, :args) ? tasks = length(math.args) : tasks = 0
     
     #Adding to log info.
     LOG_INFO = []
     push!(LOG_INFO, "-> $(math) <- \n └Tasks: $(tasks)\n └$(hasproperty(math, :args) ? math.args : "Empty")")
-
+    if math !== nothing
     if tasks >= 1
         push!(LOG_INFO, "   └ Performing subtasks:")
         r = subtasking(math, tasks, math.args, LOG_INFO, print_info)
@@ -47,7 +48,7 @@ function calculate(math::String, print_info::Bool=false)
         r = nothing
         unknownmath(math, LOG_INFO, print_info)
     end
-
+    end
 
     if print_info == true
         @info join(LOG_INFO, "\n")
