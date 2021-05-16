@@ -26,7 +26,7 @@ sym = [ :sqrt, :+, :-, :/, :^, :tan, :*,
         :gcdx, :ispow2, :nextpow, :prevpow, 
         :nextprod, :invmod, :powermod, :ndigits, 
         :widemul, :evalpoly, :@evalpoly, :im, 
-        :vcat, :hcat]
+        :vcat, :hcat, :sum]
 
 #Iterate through expression to verify all items in it are valid symbols and operations.
 function subtasking(math, tasks, sbtask, LOG_INFO, print_info)
@@ -88,12 +88,18 @@ function ispermitted(tsk, LOG_INFO)
 
         push!(LOG_INFO, "        └ $(tsk) is permitted that belongs to: $(tsk)")
         return true
+    
+    elseif tsk isa Expr && hasproperty(tsk, :head) && tsk.head == :row
+                
+        #NOT SAFE, NOT PROVEN TO BE EVAL SAFE, DO NOT USE WITHOUT PRECAUTION.
+        push!(LOG_INFO, "        └ $(tsk) is a valid row that belongs to: $(tsk)")
+        return true
 
     elseif tsk isa Expr && hasproperty(tsk, :head) && tsk.head == :hcat || tsk.head == :vcat || tsk.head == :vect
 
-            push!(LOG_INFO, "        └ $(tsk) is a valid matrix or vector that belongs to: $(tsk)")
-            return true
-        
+        push!(LOG_INFO, "        └ $(tsk) is a valid matrix or vector that belongs to: $(tsk)")
+        return true
+
     elseif tsk isa Expr && tsk.args[1] in sym
 
         #Checking if expression's first argument is in sym.
@@ -116,7 +122,6 @@ end
 
 #Error when given input contains an unknown operation.
 function unknownmath(ñ, LOG_INFO, print_info::Bool)
-
 
     items = "and is an empty value."
     if !print_info 
